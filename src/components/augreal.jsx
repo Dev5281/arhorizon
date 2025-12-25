@@ -42,20 +42,43 @@ export default function ARScene() {
   }, [isReady]);
 
   
-  const Media = async () => {
-    const video = videoRef.current;
-    if (!video) return;
+  // const Media = async () => {
+  //   const sceneEl = document.querySelector("a-scene");
+  //   const video = videoRef.current;
+  //   if (!sceneEl || !video) return;
 
-    try {
-      video.muted = true;
-      await video.play();
-      video.pause();
-      video.muted = false;
-      setIsReady(true);
-    } catch (err) {
-      console.warn("Media unlock failed:", err);
-    }
-  };
+  //   try {
+  //     video.muted = true;
+  //     await video.play();
+  //     video.pause();
+  //     video.muted = false;
+  //     setIsReady(true);
+  //   } catch (err) {
+  //     console.warn("Media unlock failed:", err);
+  //   }
+  // };
+
+const Media = async () => {
+  const sceneEl = document.querySelector("a-scene");
+  const video = videoRef.current;
+
+  if (!sceneEl || !video) return;
+
+  try {
+    // Unlock iOS video playback
+    video.muted = true;
+    await video.play();
+    video.pause();
+    video.muted = false;
+
+    // ✅ Start camera (CDN-safe)
+    await sceneEl.components["mindar-image"].start();
+
+    setIsReady(true);
+  } catch (err) {
+    console.warn("Camera start failed:", err);
+  }
+};
 
   return (
     <>
