@@ -9,37 +9,22 @@ export default function ARScene() {
 
   
   useEffect(() => {
-    if (!isReady) return;
+    const sceneEl = document.querySelector('a-scene');
 
-    const video = videoRef.current;
-    const target = targetRef.current;
-    const plane = planeRef.current;
+    if (sceneEl) {
+      sceneEl.addEventListener('loaded', () => {
+        console.log('A-Frame scene loaded');
+      });
 
-    if (!video || !target || !plane) return;
+      sceneEl.addEventListener('mindar-loaded', () => {
+        console.log('MindAR loaded successfully');
+      });
 
-    const handleTargetFound = async () => {
-      plane.setAttribute("visible", "true");
-      try {
-        await video.play();
-      } catch (err) {
-        console.warn("Video play blocked:", err);
-      }
-    };
-
-    const handleTargetLost = () => {
-      video.pause();
-      video.currentTime = 0;
-      plane.setAttribute("visible", "false");
-    };
-
-    target.addEventListener("targetFound", handleTargetFound);
-    target.addEventListener("targetLost", handleTargetLost);
-
-    return () => {
-      target.removeEventListener("targetFound", handleTargetFound);
-      target.removeEventListener("targetLost", handleTargetLost);
-    };
-  }, [isReady]);
+      sceneEl.addEventListener('mindar-error', (event) => {
+        console.error('MindAR error:', event.detail);
+      });
+    }
+  }, []);
 
   
   const Media = async () => {
