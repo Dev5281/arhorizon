@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import 'aframe';
-import 'mind-ar/dist/mindar-image-aframe.prod.js';
 
 export default function ARScene() {
   const [isReady, setIsReady] = useState(false);
@@ -11,24 +9,34 @@ export default function ARScene() {
 
   
   useEffect(() => {
-    // Check if libraries are loaded
-    const checkLibraries = () => {
-      console.log('Checking libraries...');
-      if (typeof AFRAME !== 'undefined') {
-        console.log('A-Frame loaded via npm:', AFRAME.version);
-      } else {
-        console.error('A-Frame not loaded');
-      }
-
-      if (typeof window.MINDAR !== 'undefined') {
-        console.log('MindAR loaded via npm');
-      } else {
-        console.error('MindAR not loaded');
+    // Check camera permissions
+    const checkCameraPermissions = async () => {
+      try {
+        console.log('Requesting camera permission...');
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { facingMode: 'environment' } 
+        });
+        console.log('Camera permission granted');
+        
+        // Stop the test stream
+        stream.getTracks().forEach(track => track.stop());
+      } catch (error) {
+        console.error('Camera permission denied:', error);
+        alert('Camera access is required for AR. Please allow camera permissions.');
       }
     };
 
-    // Check after a short delay to allow imports to load
-    setTimeout(checkLibraries, 1000);
+    // Check if MindAR is loaded
+    const checkMindAR = () => {
+      if (typeof window.MINDAR !== 'undefined') {
+        console.log('MindAR is available');
+      } else {
+        console.error('MindAR is not loaded');
+      }
+    };
+
+    checkCameraPermissions();
+    checkMindAR();
 
     const sceneEl = document.querySelector('a-scene');
 
@@ -38,11 +46,18 @@ export default function ARScene() {
       });
 
       sceneEl.addEventListener('mindar-loaded', () => {
-        console.log('MindAR loaded successfully');
+        console.log('MindAR loaded successfully - camera should work now');
       });
 
       sceneEl.addEventListener('mindar-error', (event) => {
         console.error('MindAR error:', event.detail);
+        alert('AR initialization failed: ' + event.detail);
+      });
+
+      // Add camera error handling
+      sceneEl.addEventListener('camera-error', (event) => {
+        console.error('Camera error:', event.detail);
+        alert('Camera error: ' + event.detail);
       });
     }
   }, []);
@@ -83,10 +98,11 @@ export default function ARScene() {
 
 
       <a-scene
-        mindar-image="imageTargetSrc: /targets.mind"
+        mindar-image="imageTargetSrc: /targets.mind; maxTrack: 1"
         vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: false"
         renderer="colorManagement: true"
+        camera="active: false"
       >
         <a-assets>
           <video
@@ -101,7 +117,11 @@ export default function ARScene() {
           />
         </a-assets>
 
-        <a-camera look-controls="enabled:false" />
+        <a-camera
+          mindar-image-target-camera
+          position="0 0 0"
+          look-controls="enabled: false"
+        />
 
         <a-entity
           ref={targetRef}

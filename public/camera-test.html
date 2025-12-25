@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Camera Test</title>
+    <style>
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+        video { width: 100%; max-width: 640px; border: 2px solid #333; }
+        button { padding: 10px 20px; margin: 10px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>Camera Test</h1>
+    <p>This tests basic camera access (not AR)</p>
+    <video id="video" autoplay playsinline></video>
+    <br>
+    <button onclick="startCamera()">Start Camera</button>
+    <button onclick="stopCamera()">Stop Camera</button>
+    <br>
+    <div id="status"></div>
+
+    <script>
+        let stream = null;
+        const statusDiv = document.getElementById('status');
+
+        async function startCamera() {
+            try {
+                statusDiv.textContent = 'Requesting camera permission...';
+                console.log('Requesting camera access...');
+
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'environment', // Use back camera on mobile
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                });
+
+                const video = document.getElementById('video');
+                video.srcObject = stream;
+                statusDiv.textContent = 'Camera started successfully!';
+                console.log('Camera started successfully');
+
+            } catch (error) {
+                console.error('Camera error:', error);
+                statusDiv.textContent = 'Camera error: ' + error.message;
+                alert('Camera access failed: ' + error.message);
+            }
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+                statusDiv.textContent = 'Camera stopped';
+                console.log('Camera stopped');
+            }
+        }
+
+        // Auto-start on page load for testing
+        window.addEventListener('load', () => {
+            console.log('Camera test page loaded');
+        });
+    </script>
+</body>
+</html>
