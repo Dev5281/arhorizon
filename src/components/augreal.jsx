@@ -9,6 +9,21 @@ export default function ARScene() {
 
   
   useEffect(() => {
+    // Test basic camera access
+    const testCamera = async () => {
+      try {
+        const testStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        console.log('Basic camera access works');
+        testStream.getTracks().forEach(track => track.stop());
+      } catch (error) {
+        console.error('Basic camera access failed:', error);
+      }
+    };
+
+    testCamera();
+  }, []);
+
+  useEffect(() => {
     const sceneEl = document.querySelector('a-scene');
 
     if (sceneEl) {
@@ -22,6 +37,13 @@ export default function ARScene() {
 
       sceneEl.addEventListener('mindar-error', (event) => {
         console.error('MindAR error:', event.detail);
+        alert('AR initialization failed. Please check console for details.');
+      });
+
+      // Add camera error handling
+      sceneEl.addEventListener('camera-error', (event) => {
+        console.error('Camera error:', event.detail);
+        alert('Camera access failed. Please allow camera permissions.');
       });
     }
   }, []);
@@ -62,10 +84,11 @@ export default function ARScene() {
 
 
       <a-scene
-        mindar-image="imageTargetSrc: /targets.mind"
+        mindar-image="imageTargetSrc: /targets.mind; maxTrack: 1"
         vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: false"
         renderer="colorManagement: true"
+        camera="active: false"
       >
         <a-assets>
           <video
@@ -80,7 +103,11 @@ export default function ARScene() {
           />
         </a-assets>
 
-        <a-camera look-controls="enabled:false" />
+        <a-camera
+          mindar-image-target-camera
+          position="0 0 0"
+          look-controls="enabled: false"
+        />
 
         <a-entity
           ref={targetRef}
