@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import 'aframe';
+import 'mind-ar/dist/mindar-image-aframe.prod.js';
 
 export default function ARScene() {
   const [isReady, setIsReady] = useState(false);
@@ -9,6 +11,25 @@ export default function ARScene() {
 
   
   useEffect(() => {
+    // Check if libraries are loaded
+    const checkLibraries = () => {
+      console.log('Checking libraries...');
+      if (typeof AFRAME !== 'undefined') {
+        console.log('A-Frame loaded via npm:', AFRAME.version);
+      } else {
+        console.error('A-Frame not loaded');
+      }
+
+      if (typeof window.MINDAR !== 'undefined') {
+        console.log('MindAR loaded via npm');
+      } else {
+        console.error('MindAR not loaded');
+      }
+    };
+
+    // Check after a short delay to allow imports to load
+    setTimeout(checkLibraries, 1000);
+
     const sceneEl = document.querySelector('a-scene');
 
     if (sceneEl) {
