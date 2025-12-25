@@ -9,9 +9,11 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
+  "engines": {
+    "node": "18.x"
+  },
   "dependencies": {
     "aframe": "^1.7.1",
-    "canvas": "^3.2.0",
     "mind-ar": "^1.2.5",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
