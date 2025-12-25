@@ -1,18 +1,81 @@
-# React + Vite
+# AR Horizon - Christmas AR Experience
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React-based Augmented Reality Christmas experience using MindAR and A-Frame.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🎄 Christmas-themed AR experience
+- 📱 Mobile-friendly camera access
+- 🎯 Image target tracking
+- 🎬 Video playback on target detection
+- 🔧 Built with Vite for fast development
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React 19 + Vite
+- **AR**: MindAR (CDN) + A-Frame (CDN)
+- **Deployment**: Vercel
+- **Styling**: CSS
 
-## Expanding the ESLint configuration
+## Local Development
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+Visit `http://localhost:5173` to test the AR experience.
+
+## Testing Camera Access
+
+Visit `http://localhost:5173/camera-test.html` to test basic camera functionality.
+
+## Deployment
+
+This project is configured for Vercel deployment:
+
+1. **No native dependencies** - Uses CDN for AR libraries to avoid build issues
+2. **SPA routing** - Configured in `vercel.json`
+3. **Optimized build** - Small bundle size (~195KB)
+
+### Deploy to Vercel
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel
+```
+
+## AR Setup
+
+- **Target Image**: `public/targets.mind` (generated from marker image)
+- **Video Content**: `public/video.mp4` (plays when target is detected)
+- **Libraries**: Loaded via CDN for better compatibility
+
+## Browser Requirements
+
+- Modern browser with camera support
+- HTTPS required for camera access (automatic on Vercel)
+- Mobile-friendly for best AR experience
+
+## Troubleshooting
+
+### Camera Not Working
+1. Allow camera permissions when prompted
+2. Test basic camera at `/camera-test.html`
+3. Check browser console for errors
+4. Ensure good lighting for AR tracking
+
+### Build Issues
+- No native dependencies required
+- Uses CDN for AR libraries
+- Compatible with Node.js 18+
+
+---
 
 Hello my name is divyanbshu
